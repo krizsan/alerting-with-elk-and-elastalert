@@ -1,0 +1,19 @@
+# Example Elastalert rule that will alert on spikes in the CPU load of
+# the monitored Mule CE ESB.
+name: CPU spike
+type: spike
+index: logstash-*
+threshold: 3
+timeframe:
+    minutes: 2
+spike_height: 1
+spike_type: "up"
+
+filter:
+- range:
+    cpuLoad:
+        from: 3.0
+        to: 100.0
+
+alert:
+- "debug"

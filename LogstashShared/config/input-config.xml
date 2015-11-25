@@ -1,0 +1,7 @@
+input {
+  jmx {
+    path => "/config-dir/jmx"
+    polling_frequency => 10
+	type => "jmx"
+  }
+}

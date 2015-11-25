@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<mule xmlns="http://www.mulesoft.org/schema/mule/core"
+      xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+      xmlns:spring="http://www.springframework.org/schema/beans"
+      xmlns:quartz="http://www.mulesoft.org/schema/mule/quartz"
+      xmlns:vm="http://www.mulesoft.org/schema/mule/vm"
+      xmlns:client="http://www.mulesoft.org/schema/mule/client"
+      xmlns:management="http://www.mulesoft.org/schema/mule/management"
+    xsi:schemaLocation="
+        http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+        http://www.mulesoft.org/schema/mule/quartz http://www.mulesoft.org/schema/mule/quartz/current/mule-quartz.xsd
+        http://www.mulesoft.org/schema/mule/vm http://www.mulesoft.org/schema/mule/vm/current/mule-vm.xsd
+        http://www.mulesoft.org/schema/mule/client http://www.mulesoft.org/schema/mule/client/current/mule-client.xsd
+        http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-current.xsd
+        http://www.mulesoft.org/schema/mule/management http://www.mulesoft.org/schema/mule/management/current/mule-management.xsd">
+
+    <description> An integration perpetuum mobile</description>
+
+    <!-- Quartz connector with one single thread to prevent parallel execution of jobs. -->
+    <quartz:connector name="oneThreadQuartzConnector">
+        <quartz:factory-property key="org.quartz.threadPool.threadCount" value="1"/>
+    </quartz:connector>
+
+    <!-- Flow that periodically generates events that are sent to another flow. -->
+    <flow name="eventGeneratingFlow">
+        <quartz:inbound-endpoint
+                jobName="eventGeneratingJob"
+                repeatInterval="20"
+                repeatCount="-1"
+                connector-ref="oneThreadQuartzConnector">
+            <quartz:event-generator-job>
+                <quartz:payload>go</quartz:payload>
+            </quartz:event-generator-job>
+        </quartz:inbound-endpoint>
+
+        <logger level="ERROR" message="Generated an event!"/>
+
+        <vm:outbound-endpoint path="eventReceiverEndpoint" exchange-pattern="one-way"/>
+    </flow>
+
+    <!-- Flow that receives events. -->
+    <flow name="eventReceivingFlow">
+        <vm:inbound-endpoint path="eventReceiverEndpoint" exchange-pattern="one-way"/>
+
+        <logger level="ERROR" message="Received an event!"/>
+    </flow>
+</mule>

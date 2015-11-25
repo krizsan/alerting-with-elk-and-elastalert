@@ -1,0 +1,9 @@
+output {
+	elasticsearch {
+		hosts => [ elasticsearch ]
+	}
+
+	stdout {
+  		codec => rubydebug
+  	}
+}
