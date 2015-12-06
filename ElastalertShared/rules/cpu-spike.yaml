@@ -3,10 +3,10 @@
 name: CPU spike
 type: spike
 index: logstash-*
-threshold: 3
+threshold: 1
 timeframe:
-    minutes: 2
-spike_height: 1
+    minutes: 1
+spike_height: 2
 spike_type: "up"
 
 filter:
