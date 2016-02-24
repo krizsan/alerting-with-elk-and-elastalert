@@ -1,5 +1,5 @@
 # Docker Compose configuration for the Alerting with ELK and Elastalert article.
-# By Ivan Krizsan - https://www.github.com/krizsan
+# By Ivan Krizsan.
 
 # Mule ESB CE instance that is being monitored in the example.
 mule_ce_esb:
@@ -12,7 +12,7 @@ mule_ce_esb:
         - ./MuleShared/logs:/opt/mule/logs
 
 # Elasticsearch instance.
-# Note that with the official Elasticsearch 2.0 Docker image, we have to set
+# Note that with the official Elasticsearch Docker image, we have to set
 # es.network.bind_host to 0.0.0.0 in order for Elasticsearch to be reachable
 # from outside of the Docker container it runs in.
 elasticsearch:
@@ -58,7 +58,10 @@ kibana:
 # Elastalert instance.
 # Docker image available from Docker Hub.
 elastalert:
-    image: ivankrizsan/elastalert:latest
+    image: ivankrizsan/elastalert:test
+    cap_add:
+        - SYS_TIME
+        - SYS_NICE
     volumes:
         - ./ElastalertShared/logs:/opt/logs
         - ./ElastalertShared/rules:/opt/rules
