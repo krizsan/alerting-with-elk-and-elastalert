@@ -58,7 +58,7 @@ kibana:
 # Elastalert instance.
 # Docker image available from Docker Hub.
 elastalert:
-    image: ivankrizsan/elastalert:test
+    image: ivankrizsan/elastalert
     cap_add:
         - SYS_TIME
         - SYS_NICE
