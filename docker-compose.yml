@@ -1,70 +1,77 @@
 # Docker Compose configuration for the Alerting with ELK and Elastalert article.
 # By Ivan Krizsan.
 
+version: '3'
+
+services:
+
 # Mule ESB CE instance that is being monitored in the example.
-mule_ce_esb:
-    image: vromero/mule:3.7.0
-    ports:
-        - "1096:1096"
-    volumes:
-        - ./MuleShared/apps:/opt/mule/apps
-        - ./MuleShared/conf:/opt/mule/conf
-        - ./MuleShared/logs:/opt/mule/logs
+  mule_ce_esb:
+      image: vromero/mule:3.7.0
+      ports:
+          - "1096:1096"
+      volumes:
+          - ./MuleShared/apps:/opt/mule/apps
+          - ./MuleShared/conf:/opt/mule/conf
+          - ./MuleShared/logs:/opt/mule/logs
 
-# Elasticsearch instance.
-# Note that with the official Elasticsearch Docker image, we have to set
-# es.network.bind_host to 0.0.0.0 in order for Elasticsearch to be reachable
-# from outside of the Docker container it runs in.
-elasticsearch:
-    build: ivankrizsan-elasticsearch
-    command: elasticsearch -Des.network.bind_host=0.0.0.0
-    ports:
-        - "9200:9200"
-        - "9300:9300"
-    volumes:
-        - ./ElasticsearchShared/config:/usr/share/elasticsearch/config
-        - ./ElasticsearchShared/logs:/opt/logs/elasticsearch
+  # Elasticsearch instance.
+  # Note that with the official Elasticsearch Docker image, we have to set
+  # es.network.bind_host to 0.0.0.0 in order for Elasticsearch to be reachable
+  # from outside of the Docker container it runs in.
+  elasticsearch:
+      build: ivankrizsan-elasticsearch
+      command: elasticsearch -Des.network.bind_host=0.0.0.0
+      ports:
+          - "9200:9200"
+          - "9300:9300"
+      volumes:
+          - ./ElasticsearchShared/config:/usr/share/elasticsearch/config
+          - ./ElasticsearchShared/logs:/opt/logs/elasticsearch
 
-# Logstash instance.
-# Customized wrapper around the official image as to wait for Elasticsearch
-# to be up and running before starting Logstash.
-logstash:
-    build: ivankrizsan-logstash
-    command: logstash -f /config-dir/
-    volumes:
-        - ./LogstashShared/config:/config-dir
-        - ./LogstashShared/logs:/log-dir
-    links:
-        - mule_ce_esb:muleserver
-        - elasticsearch:elasticsearch
-    environment:
-        - ELASTICSEARCH_URL=http://elasticsearch:9200
+  # Logstash instance.
+  # Customized wrapper around the official image as to wait for Elasticsearch
+  # to be up and running before starting Logstash.
+  logstash:
+      build: ivankrizsan-logstash
+      command: logstash -f /config-dir/
+      volumes:
+          - ./LogstashShared/config:/config-dir
+          - ./LogstashShared/logs:/log-dir
+      links:
+          - mule_ce_esb:muleserver
+          - elasticsearch:elasticsearch
+      environment:
+          - ELASTICSEARCH_URL=http://elasticsearch:9200
 
-# Kibana instance.
-# Customized wrapper around the official image as to wait for Elasticsearch
-# to be up and running before starting Kibana.
-kibana:
-    build: ivankrizsan-kibana
-    volumes:
-        - ./KibanaShared/config:/opt/kibana/config
-        - ./KibanaShared/logs:/log-dir
-    ports:
-        - "5601:5601"
-    links:
-        - elasticsearch:elasticsearch
-    environment:
-        - ELASTICSEARCH_URL=http://elasticsearch:9200
+  # Kibana instance.
+  # Customized wrapper around the official image as to wait for Elasticsearch
+  # to be up and running before starting Kibana.
+  kibana:
+      build: ivankrizsan-kibana
+      volumes:
+          - ./KibanaShared/config:/opt/kibana/config
+          - ./KibanaShared/logs:/log-dir
+      ports:
+          - "5601:5601"
+      links:
+          - elasticsearch:elasticsearch
+      environment:
+          - ELASTICSEARCH_URL=http://elasticsearch:9200
 
-# Elastalert instance.
-# Docker image available from Docker Hub.
-elastalert:
-    image: ivankrizsan/elastalert
-    cap_add:
-        - SYS_TIME
-        - SYS_NICE
-    volumes:
-        - ./ElastalertShared/logs:/opt/logs
-        - ./ElastalertShared/rules:/opt/rules
-        - ./ElastalertShared/config:/opt/config
-    links:
-        - elasticsearch:elasticsearch_host
+  # Elastalert instance.
+  # Docker image available from Docker Hub.
+  elastalert:
+      image: ivankrizsan/elastalert
+      cap_add:
+          - SYS_TIME
+          - SYS_NICE
+      volumes:
+          - ./ElastalertShared/logs:/opt/logs
+          - ./ElastalertShared/rules:/opt/rules
+          - ./ElastalertShared/config:/opt/config
+      links:
+          - elasticsearch:elasticsearch_host
+      environment:
+          - ELASTICSEARCH_HOST=elasticsearch_host
+          - ELASTICSEARCH_PORT=9200
