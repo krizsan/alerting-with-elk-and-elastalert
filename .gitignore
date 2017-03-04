@@ -1,0 +1,5 @@
+/MuleShared/logs/*.log*
+/MuleShared/apps/*.txt
+/KibanaShared/logs/*.log*
+/ElasticsearchShared/logs/*.log*
+/ElastalertShared/logs/*.log*
