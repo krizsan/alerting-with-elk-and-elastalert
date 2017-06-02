@@ -1,0 +1,75 @@
+# Configuration for Metricbeat monitoring the Mule ESB instance.
+metricbeat.modules:
+# The system module measures CPU and memory statistics of the Docker container
+# in which Mule ESB is running.
+- module: system
+  metricsets:
+    - cpu
+    - memory
+  enabled: true
+  period: 10s
+
+# The Jolokia module fetches data from JMX MBeans exposed by the Mule ESB instance.
+- module: jolokia
+  metricsets:
+      - jmx
+  enabled: true
+  period: 1s
+  # URL at which Jolokia exposes JMX metrics.
+  hosts: ["localhost:8899"]
+  namespace: "jmx-metrics"
+  jmx.mappings:
+    # Retrieve Mule ESB JVM uptime.
+    - mbean: 'java.lang:type=Runtime'
+      attributes:
+        - attr: Uptime
+          field: jvm.uptime
+    # Retrieve Mule ESB JVM CPU load.
+    - mbean: 'java.lang:type=OperatingSystem'
+      attributes:
+        - attr: ProcessCpuLoad
+          field: jvm.process_cpu_load
+    # Retrieve heap and non-heap memory usage in Mule ESB JVM.
+    - mbean: 'java.lang:type=Memory'
+      attributes:
+        - attr: HeapMemoryUsage
+          field: jvm.memory.heap_memory_usage
+        - attr: NonHeapMemoryUsage
+          field: jvm.memory.non_heap_memory_usage
+    # Retrieve number of events received by a flow in the example Mule ESB application.
+    # Important note!
+    # The ordering of the Flow and type is significant for MetricBeats and should
+    # be as presented by Jolokia performing a direct GET request using a browser.
+    # In addition, as can be seen below, quotes in MBean names do not need to be escaped.
+    - mbean: 'Mule.mule-perpetuum-mobile:Flow="eventGeneratingFlow",type=org.mule.Statistics'
+      attributes:
+        - attr: TotalEventsReceived
+          field: mule.perpetuum-mobile.eventReceivingFlow.TotalEventsReceived
+
+# Metricbeat sends its output to Elasticsearch.
+output.elasticsearch:
+  hosts: ['elasticsearch:9200']
+  # Remove/change username and password depending on Elasticsearch security configuration.
+  # This username and password match those used by the Elastic Docker images.
+  username: elastic
+  password: changeme
+
+# Dynamic reloading of Metricbeat's configuration.
+metricbeat.config.modules:
+  path: /opt/metricbeat/conf/*.yml
+  reload.enabled: true
+  reload.period: 10s
+
+# Metricbeat logging configuration.
+logging:
+  # Logging level: debug, info, warning, error or critical.
+  level: info
+  to_files: true
+  logging.to_syslog: false
+  files:
+    # Directory in which to write log files.
+    path: /opt/metricbeat/logs
+    # Name of log file.
+    name: mybeat.log
+    # Keep this number of log files when rotating.
+    keepfiles: 10

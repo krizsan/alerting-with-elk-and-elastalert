@@ -14,10 +14,14 @@ buffer_time:
 
 # The elasticsearch hostname for metadata writeback
 # Note that every rule can have it's own elasticsearch host
-es_host: elasticsearch_host
+es_host: elasticsearchhost
 
 # The elasticsearch port
 es_port: 9200
+
+# Username and password to log in to elasticsearch.
+es_username: elastic
+es_password: changeme
 
 # Optional URL prefix for elasticsearch
 #es_url_prefix: elasticsearch

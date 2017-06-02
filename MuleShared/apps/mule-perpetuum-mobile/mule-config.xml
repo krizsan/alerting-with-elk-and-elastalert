@@ -25,7 +25,7 @@
     <flow name="eventGeneratingFlow">
         <quartz:inbound-endpoint
                 jobName="eventGeneratingJob"
-                repeatInterval="20"
+                repeatInterval="50"
                 repeatCount="-1"
                 connector-ref="oneThreadQuartzConnector">
             <quartz:event-generator-job>

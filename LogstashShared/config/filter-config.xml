@@ -1,9 +1,0 @@
-filter {
- if [type] == "jmx" {
-   if ("ProcessCpuLoad" in [metric_path] or "SystemCpuLoad" in [metric_path]) {
-     ruby {
-	   code => "event['cpuLoad'] = event['metric_value_number'] * 100"
-     }
-   }
- }
-}

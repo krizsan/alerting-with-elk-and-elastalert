@@ -3,3 +3,5 @@
 /KibanaShared/logs/*.log*
 /ElasticsearchShared/logs/*.log*
 /ElastalertShared/logs/*.log*
+info-donotcommit/
+.DS_Store

@@ -1,38 +1,36 @@
 # Kibana is served by a back end server. This controls which port to use.
-port: 5601
+server.port: 5601
 
 # The host to bind the server to.
-host: "0.0.0.0"
+server.host: "0.0.0.0"
 
 # The Elasticsearch instance to use for all your queries.
-elasticsearch_url: "http://elasticsearch:9200"
+elasticsearch.url: "http://elasticsearch:9200"
 
 # preserve_elasticsearch_host true will send the hostname specified in `elasticsearch`. If you set it to false,
 # then the host you use to connect to *this* Kibana instance will be sent.
-elasticsearch_preserve_host: true
+elasticsearch.preserveHost: true
 
 # Kibana uses an index in Elasticsearch to store saved searches, visualizations
 # and dashboards. It will create a new index if it doesn't already exist.
-kibana_index: ".kibana"
+kibana.index: ".kibana"
 
 # The default application to load.
-default_app_id: "discover"
+kibana.defaultAppId: "discover"
+
+# Time in milliseconds to wait for Elasticsearch to respond to pings.
+elasticsearch.pingTimeout: 300000
 
 # Time in milliseconds to wait for responses from the back end or elasticsearch.
-# This must be > 0
-request_timeout: 300000
+elasticsearch.requestTimeout: 300000
 
 # Time in milliseconds for Elasticsearch to wait for responses from shards.
 # Set to 0 to disable.
-shard_timeout: 0
-
-# Set to false to have a complete disregard for the validity of the SSL
-# certificate.
-verify_ssl: true
+elasticsearch.shardTimeout: 0
 
 # If you would like to send the log output to a file you can set the path below.
 # This will also turn off the STDOUT log output.
-log_file: /log-dir/kibana.log
+logging.dest: /log-dir/kibana.log
 
 # Plugins that are included in the build, and no longer found in the plugins/ folder
 bundled_plugin_ids:
