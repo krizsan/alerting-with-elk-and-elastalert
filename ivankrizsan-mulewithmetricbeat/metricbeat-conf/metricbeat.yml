@@ -41,7 +41,7 @@ metricbeat.modules:
     # The ordering of the Flow and type is significant for MetricBeats and should
     # be as presented by Jolokia performing a direct GET request using a browser.
     # In addition, as can be seen below, quotes in MBean names do not need to be escaped.
-    - mbean: 'Mule.mule-perpetuum-mobile:Flow="eventGeneratingFlow",type=org.mule.Statistics'
+    - mbean: 'Mule.mule-perpetuum-mobile:Flow="eventReceivingFlow",type=org.mule.Statistics'
       attributes:
         - attr: TotalEventsReceived
           field: mule.perpetuum-mobile.eventReceivingFlow.TotalEventsReceived
