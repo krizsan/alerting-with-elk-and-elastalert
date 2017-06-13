@@ -24,7 +24,7 @@ fi
 sed -i -e"s|Djava.rmi.server.hostname=.*|Djava.rmi.server.hostname=${MULE_EXTERNAL_IP}|g" ${MULE_HOME}/conf/wrapper.conf
 
 # Start MetricBeat in the background.
-(cd ${METRICBEAT_HOME} && exec metricbeat -e -v -c ${METRICBEAT_HOME}/conf/metricbeat.yml) &
+(cd ${METRICBEAT_HOME} && exec metricbeat -v -c ${METRICBEAT_HOME}/conf/metricbeat.yml) &
 
 # Start Mule ESB.
 # The Mule startup script will take care of launching Mule using the appropriate user.
