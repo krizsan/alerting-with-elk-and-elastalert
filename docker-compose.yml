@@ -14,6 +14,8 @@ services:
             - ./MuleShared/logs:/opt/mule-standalone/logs
             - ./MuleShared/metricbeat-conf:/opt/metricbeat/conf
             - ./MuleShared/metricbeat-logs:/opt/metricbeat/logs
+        ports:
+            - "8899:8899"
         links:
             - elasticsearch:elasticsearch
         environment:
