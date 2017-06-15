@@ -20,6 +20,8 @@ services:
             - elasticsearch:elasticsearch
         environment:
             - MULE_EXTERNAL_IP=127.0.0.1
+            - SET_CONTAINER_TIMEZONE=true
+            - CONTAINER_TIMEZONE=Asia/Taipei
 
     # Elasticsearch instance.
     # Note that with the official Elasticsearch Docker image, we have to set
@@ -56,6 +58,7 @@ services:
         image: ivankrizsan/elastalert:latest
         depends_on:
             - elasticsearch
+            - kibana
         cap_add:
             - SYS_TIME
             - SYS_NICE
@@ -68,3 +71,5 @@ services:
         environment:
             - ELASTICSEARCH_USER=elastic
             - ELASTICSEARCH_PASSWORD=changeme
+            - SET_CONTAINER_TIMEZONE=true
+            - CONTAINER_TIMEZONE=Asia/Taipei
